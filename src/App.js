@@ -1,24 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import "./styles.css";
+import Card from "./Card";
+import Skeleton from "./Skeleton";
+import React, { useState, useEffect } from "react";
 
 function App() {
+  const [posts, setPosts] = useState([]);
+  const [isEmpty, setIsEmpty] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      fetch("https://jsonplaceholder.typicode.com/posts")
+        .then((response) => response.json())
+
+        .then((data) => {
+          setPosts(data);
+
+          setIsEmpty(false);
+        })
+
+        .catch((err) => console.log(err));
+    }, 1500);
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <h1>Blog posts</h1>
+
+      {isEmpty && [1, 2, 3, 4].map((value) => <Skeleton key={value} />)}
+
+      {isEmpty ||
+        posts.map((post) => (
+          <Card key={post.id} title={post.title} body={post.body} />
+        ))}
+    </>
   );
 }
 
